@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -350,5 +350,40 @@ function BooksPageContent() {
   );
 }
 
-export default BooksPageContent;
+export default function BooksPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-6">
+              <Link href="/" className="text-2xl font-bold text-gray-900">
+                📚 readBOOK
+              </Link>
+              <nav className="flex space-x-8">
+                <Link href="/books" className="text-blue-600 font-medium">
+                  หนังสือทั้งหมด
+                </Link>
+                <Link href="/search" className="text-gray-600 hover:text-gray-900">
+                  ค้นหา
+                </Link>
+                <Link href="/categories" className="text-gray-600 hover:text-gray-900">
+                  หมวดหมู่
+                </Link>
+              </nav>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">กำลังโหลด...</p>
+          </div>
+        </main>
+      </div>
+    }>
+      <BooksPageContent />
+    </Suspense>
+  );
+}
 
