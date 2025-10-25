@@ -10,8 +10,8 @@ const urlsToCache = [
   '/categories',
   '/offline',
   '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-192x192.svg',
+  '/icons/icon-512x512.svg'
 ];
 
 // ติดตั้ง Service Worker
@@ -22,7 +22,15 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Service Worker: Caching files');
-        return cache.addAll(urlsToCache);
+        // Cache files one by one to avoid failures
+        return Promise.allSettled(
+          urlsToCache.map(url => 
+            cache.add(url).catch(error => {
+              console.warn(`Service Worker: Failed to cache ${url}`, error);
+              return null;
+            })
+          )
+        );
       })
       .then(() => {
         console.log('Service Worker: Installation complete');
@@ -57,6 +65,19 @@ self.addEventListener('activate', (event) => {
 
 // จัดการ fetch requests
 self.addEventListener('fetch', (event) => {
+  // ข้าม chrome-extension และ other unsupported schemes
+  if (event.request.url.startsWith('chrome-extension:') || 
+      event.request.url.startsWith('moz-extension:') ||
+      event.request.url.startsWith('safari-extension:') ||
+      event.request.url.startsWith('edge-extension:')) {
+    return;
+  }
+
+  // ข้าม non-GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   // ตรวจสอบว่าเป็น navigation request หรือไม่
   if (event.request.mode === 'navigate') {
     event.respondWith(
@@ -80,7 +101,18 @@ self.addEventListener('fetch', (event) => {
           if (response.status === 200) {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
+              // ตรวจสอบว่า request สามารถ cache ได้หรือไม่
+              if (event.request.method === 'GET' && 
+                  !event.request.url.startsWith('chrome-extension:') &&
+                  !event.request.url.startsWith('moz-extension:') &&
+                  !event.request.url.startsWith('safari-extension:') &&
+                  !event.request.url.startsWith('edge-extension:')) {
+                try {
+                  cache.put(event.request, responseClone);
+                } catch (error) {
+                  console.warn('Service Worker: Failed to cache request', error);
+                }
+              }
             });
           }
           return response;
@@ -108,7 +140,17 @@ self.addEventListener('fetch', (event) => {
               if (response.status === 200) {
                 const responseClone = response.clone();
                 caches.open(CACHE_NAME).then((cache) => {
-                  cache.put(event.request, responseClone);
+                  // ตรวจสอบว่า request สามารถ cache ได้หรือไม่
+                  if (!event.request.url.startsWith('chrome-extension:') &&
+                      !event.request.url.startsWith('moz-extension:') &&
+                      !event.request.url.startsWith('safari-extension:') &&
+                      !event.request.url.startsWith('edge-extension:')) {
+                    try {
+                      cache.put(event.request, responseClone);
+                    } catch (error) {
+                      console.warn('Service Worker: Failed to cache asset', error);
+                    }
+                  }
                 });
               }
               return response;
