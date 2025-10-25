@@ -249,12 +249,6 @@ function AdminBooksPageContent() {
                           >
                             Edit
                           </Link>
-                          <Link
-                            href={`/admin/books/${book.id}/links`}
-                            className="text-green-600 hover:text-green-900"
-                          >
-                            Links
-                          </Link>
                           <button
                             onClick={() => handleDelete(book.id)}
                             className="text-red-600 hover:text-red-900"
