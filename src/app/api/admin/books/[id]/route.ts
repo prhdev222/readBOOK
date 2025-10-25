@@ -31,6 +31,13 @@ export async function PUT(
     const body = await request.json();
     const { title, author, description, category, language, links } = body;
 
+    // Validate required fields
+    if (!title || !author || !category) {
+      return NextResponse.json({ error: 'Title, author, and category are required' }, { status: 400 });
+    }
+
+    console.log('Updating book:', { id: params.id, title, author, category, language });
+
     // Update book
     const { error: bookError } = await supabase
       .from('books')
@@ -45,7 +52,8 @@ export async function PUT(
       .eq('id', params.id);
 
     if (bookError) {
-      return NextResponse.json({ error: 'Failed to update book' }, { status: 400 });
+      console.error('Book update error:', bookError);
+      return NextResponse.json({ error: `Failed to update book: ${bookError.message}` }, { status: 400 });
     }
 
     // Handle links - delete existing and insert new ones
@@ -55,12 +63,15 @@ export async function PUT(
       .eq('book_id', params.id);
 
     if (deleteError) {
-      return NextResponse.json({ error: 'Failed to update links' }, { status: 400 });
+      console.error('Delete links error:', deleteError);
+      return NextResponse.json({ error: `Failed to delete existing links: ${deleteError.message}` }, { status: 400 });
     }
 
     // Insert new links if provided
     if (links && links.length > 0) {
       const validLinks = links.filter((link: any) => link.url && link.title);
+      console.log('Valid links to insert:', validLinks);
+      
       if (validLinks.length > 0) {
         const linksWithBookId = validLinks.map((link: any) => ({
           book_id: params.id,
@@ -76,7 +87,8 @@ export async function PUT(
           .insert(linksWithBookId);
 
         if (linksError) {
-          return NextResponse.json({ error: 'Failed to update links' }, { status: 400 });
+          console.error('Insert links error:', linksError);
+          return NextResponse.json({ error: `Failed to insert new links: ${linksError.message}` }, { status: 400 });
         }
       }
     }

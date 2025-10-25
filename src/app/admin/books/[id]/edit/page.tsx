@@ -156,46 +156,25 @@ function EditBookPageContent() {
         return;
       }
 
-      // Update book
-      const { error: bookError } = await supabase
-        .from('books')
-        .update({
+      // Use API route to update book
+      const response = await fetch(`/api/admin/books/${bookId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           title: book.title,
           author: book.author,
           description: book.description || null,
           category: book.category,
           language: book.language,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', bookId);
+          links: links
+        }),
+      });
 
-      if (bookError) throw bookError;
-
-      // Handle links - delete existing and insert new ones
-      const { error: deleteError } = await supabase
-        .from('book_links')
-        .delete()
-        .eq('book_id', bookId);
-
-      if (deleteError) throw deleteError;
-
-      // Insert new links
-      const validLinks = links.filter(link => link.url && link.title);
-      if (validLinks.length > 0) {
-        const linksWithBookId = validLinks.map(link => ({
-          book_id: bookId,
-          type: link.type,
-          url: link.url,
-          title: link.title,
-          is_primary: link.is_primary,
-          is_active: true
-        }));
-
-        const { error: linksError } = await supabase
-          .from('book_links')
-          .insert(linksWithBookId);
-
-        if (linksError) throw linksError;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update book');
       }
 
       setSuccess(true);
@@ -205,7 +184,7 @@ function EditBookPageContent() {
 
     } catch (error) {
       console.error('Error updating book:', error);
-      setError('Failed to update book');
+      setError(error instanceof Error ? error.message : 'Failed to update book');
     } finally {
       setLoading(false);
     }
