@@ -46,8 +46,7 @@ export async function PUT(
         author,
         description: description || null,
         category,
-        language,
-        updated_at: new Date().toISOString()
+        language
       })
       .eq('id', params.id);
 
