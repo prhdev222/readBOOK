@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { BookLink } from '@/lib/supabase';
 
-// Extended interface to handle undefined media_type
-interface MediaPlayerBookLink extends Omit<BookLink, 'media_type'> {
+// Extended interface to handle undefined properties
+interface MediaPlayerBookLink extends Omit<BookLink, 'media_type' | 'updated_at'> {
   media_type?: 'file' | 'image' | 'audio' | 'video' | 'youtube' | 'document';
+  updated_at?: string;
 }
 
 interface MediaPlayerProps {
