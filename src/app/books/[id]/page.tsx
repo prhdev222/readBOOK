@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import MediaPlayerFallback from '@/components/MediaPlayerFallback';
+import MediaPlayer from '@/components/MediaPlayer';
 
 interface Book {
   id: string;
@@ -190,7 +190,7 @@ export default function BookDetailsPage() {
               {book.links.length > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {book.links.map((link) => (
-                    <MediaPlayerFallback
+                    <MediaPlayer
                       key={link.id}
                       media={link}
                     />

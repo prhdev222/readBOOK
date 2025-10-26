@@ -125,7 +125,7 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
               <div className="flex-1">
                 <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
                   <span>{formatTime(0)}</span>
-                  <span>{formatTime(duration)}</span>
+                  <span>{formatTime(media.duration || 0)}</span>
                 </div>
                 <div className="w-full bg-gray-300 rounded-full h-2">
                   <div
