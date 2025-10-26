@@ -45,7 +45,7 @@ function AdminLoginPageContent() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <Link href="/" className="text-3xl font-bold text-gray-900">
-            📚 readBOOK
+            🏛️ สื่อความรู้เพื่อพระสงฆ์
           </Link>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Admin Login

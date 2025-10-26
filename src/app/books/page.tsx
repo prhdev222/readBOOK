@@ -119,11 +119,11 @@ function BooksPageContent() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <Link href="/" className="text-2xl font-bold text-gray-900">
-                📚 readBOOK
+                🏛️ สื่อความรู้เพื่อพระสงฆ์
               </Link>
               <nav className="flex space-x-8">
                 <Link href="/books" className="text-blue-600 font-medium">
-                  หนังสือทั้งหมด
+                  สื่อทั้งหมด
                 </Link>
                 <Link href="/search" className="text-gray-600 hover:text-gray-900">
                   ค้นหา
@@ -153,11 +153,11 @@ function BooksPageContent() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <Link href="/" className="text-2xl font-bold text-gray-900">
-                📚 readBOOK
+                🏛️ สื่อความรู้เพื่อพระสงฆ์
               </Link>
               <nav className="flex space-x-8">
                 <Link href="/books" className="text-blue-600 font-medium">
-                  หนังสือทั้งหมด
+                  สื่อทั้งหมด
                 </Link>
                 <Link href="/search" className="text-gray-600 hover:text-gray-900">
                   ค้นหา
@@ -193,11 +193,11 @@ function BooksPageContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <Link href="/" className="text-2xl font-bold text-gray-900">
-              📚 readBOOK
+              🏛️ สื่อความรู้เพื่อพระสงฆ์
             </Link>
             <nav className="flex space-x-8">
               <Link href="/books" className="text-blue-600 font-medium">
-                หนังสือทั้งหมด
+                สื่อทั้งหมด
               </Link>
               <Link href="/search" className="text-gray-600 hover:text-gray-900">
                 ค้นหา
@@ -217,7 +217,7 @@ function BooksPageContent() {
             <div className="flex-1">
               <input
                 type="text"
-                placeholder="ค้นหาหนังสือ..."
+                placeholder="ค้นหาสื่อความรู้..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -240,7 +240,7 @@ function BooksPageContent() {
           </div>
 
           <div className="text-sm text-gray-600">
-            พบหนังสือ {filteredBooks.length} เล่ม
+            พบสื่อความรู้ {filteredBooks.length} รายการ
           </div>
         </div>
 
@@ -338,7 +338,7 @@ function BooksPageContent() {
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📚</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              ไม่พบหนังสือ
+              ไม่พบสื่อความรู้
             </h3>
             <p className="text-gray-600">
               ลองเปลี่ยนคำค้นหาหรือหมวดหมู่ดูครับ
@@ -358,11 +358,11 @@ export default function BooksPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <Link href="/" className="text-2xl font-bold text-gray-900">
-                📚 readBOOK
+                🏛️ สื่อความรู้เพื่อพระสงฆ์
               </Link>
               <nav className="flex space-x-8">
                 <Link href="/books" className="text-blue-600 font-medium">
-                  หนังสือทั้งหมด
+                  สื่อทั้งหมด
                 </Link>
                 <Link href="/search" className="text-gray-600 hover:text-gray-900">
                   ค้นหา

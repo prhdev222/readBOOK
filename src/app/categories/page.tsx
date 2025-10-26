@@ -44,7 +44,7 @@ function CategoriesPageContent() {
 
       if (categoriesError) throw categoriesError;
 
-      // โหลดข้อมูลหนังสือ
+      // โหลดข้อมูลสื่อความรู้
       const { data: booksData, error: booksError } = await supabase
         .from('books')
         .select('id, title, author, description, category, language, created_at')
@@ -62,7 +62,7 @@ function CategoriesPageContent() {
     }
   };
 
-  // จัดกลุ่มหนังสือตามหมวดหมู่
+  // จัดกลุ่มสื่อความรู้ตามหมวดหมู่
   const booksByCategory = books.reduce((acc, book) => {
     if (!acc[book.category]) {
       acc[book.category] = [];
@@ -79,7 +79,7 @@ function CategoriesPageContent() {
       return {
         icon: categoryFromDb.icon,
         color: 'from-' + categoryFromDb.color.replace('#', '') + ' to-' + categoryFromDb.color.replace('#', '') + '-600',
-        description: categoryFromDb.description || `หนังสือในหมวดหมู่ ${categoryName}`
+        description: categoryFromDb.description || `สื่อความรู้ในหมวดหมู่ ${categoryName}`
       };
     }
 
@@ -88,7 +88,7 @@ function CategoriesPageContent() {
       'เทคโนโลยี': {
         icon: '💻',
         color: 'from-blue-500 to-cyan-600',
-        description: 'หนังสือเกี่ยวกับการเขียนโปรแกรม คอมพิวเตอร์ และเทคโนโลยี'
+        description: 'สื่อความรู้เกี่ยวกับการเขียนโปรแกรม คอมพิวเตอร์ และเทคโนโลยี'
       },
       'AI & Data Science': {
         icon: '🤖',
@@ -108,7 +108,7 @@ function CategoriesPageContent() {
       'การศึกษา': {
         icon: '📖',
         color: 'from-indigo-500 to-blue-600',
-        description: 'หนังสือเพื่อการศึกษาและการเรียนรู้'
+        description: 'สื่อความรู้เพื่อการศึกษาและการเรียนรู้'
       },
       'ไลฟ์สไตล์': {
         icon: '🌟',
@@ -120,7 +120,7 @@ function CategoriesPageContent() {
     return fallbackColors[categoryName] || {
       icon: '📚',
       color: 'from-gray-500 to-gray-600',
-      description: `หนังสือในหมวดหมู่ ${categoryName}`
+      description: `สื่อความรู้ในหมวดหมู่ ${categoryName}`
     };
   };
 
@@ -132,11 +132,11 @@ function CategoriesPageContent() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <Link href="/" className="text-2xl font-bold text-gray-900">
-                📚 readBOOK
+                🏛️ สื่อความรู้เพื่อพระสงฆ์
               </Link>
               <nav className="flex space-x-8">
                 <Link href="/books" className="text-gray-600 hover:text-gray-900">
-                  หนังสือทั้งหมด
+                  สื่อทั้งหมด
                 </Link>
                 <Link href="/search" className="text-gray-600 hover:text-gray-900">
                   ค้นหา
@@ -166,11 +166,11 @@ function CategoriesPageContent() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <Link href="/" className="text-2xl font-bold text-gray-900">
-                📚 readBOOK
+                🏛️ สื่อความรู้เพื่อพระสงฆ์
               </Link>
               <nav className="flex space-x-8">
                 <Link href="/books" className="text-gray-600 hover:text-gray-900">
-                  หนังสือทั้งหมด
+                  สื่อทั้งหมด
                 </Link>
                 <Link href="/search" className="text-gray-600 hover:text-gray-900">
                   ค้นหา
@@ -199,7 +199,7 @@ function CategoriesPageContent() {
     );
   }
 
-  // แสดงหมวดหมู่จากฐานข้อมูล หรือ fallback จากหนังสือ
+  // แสดงหมวดหมู่จากฐานข้อมูล หรือ fallback จากสื่อความรู้
   const displayCategories = categories.length > 0
     ? categories.map(cat => ({
         name: cat.name,
@@ -207,7 +207,7 @@ function CategoriesPageContent() {
         info: {
           icon: cat.icon,
           color: 'from-blue-500 to-' + cat.color.replace('#', '') + '-600',
-          description: cat.description || `หนังสือในหมวดหมู่ ${cat.name}`
+          description: cat.description || `สื่อความรู้ในหมวดหมู่ ${cat.name}`
         }
       }))
     : Object.entries(booksByCategory).map(([categoryName, categoryBooks]) => ({
@@ -223,11 +223,11 @@ function CategoriesPageContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <Link href="/" className="text-2xl font-bold text-gray-900">
-              📚 readBOOK
+              🏛️ สื่อความรู้เพื่อพระสงฆ์
             </Link>
             <nav className="flex space-x-8">
               <Link href="/books" className="text-gray-600 hover:text-gray-900">
-                หนังสือทั้งหมด
+                สื่อทั้งหมด
               </Link>
               <Link href="/search" className="text-gray-600 hover:text-gray-900">
                 ค้นหา
@@ -243,9 +243,9 @@ function CategoriesPageContent() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">หมวดหมู่หนังสือ</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">หมวดหมู่สื่อความรู้</h1>
           <p className="text-xl text-gray-600">
-            เลือกหมวดหมู่ที่คุณสนใจเพื่อค้นหาหนังสือที่เกี่ยวข้อง
+            เลือกหมวดหมู่ที่คุณสนใจเพื่อค้นหาสื่อความรู้ที่เกี่ยวข้อง
           </p>
         </div>
 
@@ -265,15 +265,15 @@ function CategoriesPageContent() {
                   {/* Category Stats */}
                   <div className="p-6 bg-white">
                     <div className="flex items-center justify-between mb-4">
-                      <span className="text-gray-600">จำนวนหนังสือ</span>
+                      <span className="text-gray-600">จำนวนสื่อความรู้</span>
                       <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                        {category.books.length} เล่ม
+                        {category.books.length}
                       </span>
                     </div>
 
                     {/* Recent Books in Category */}
                     <div className="space-y-3">
-                      <h4 className="text-sm font-medium text-gray-700">หนังสือล่าสุด:</h4>
+                      <h4 className="text-sm font-medium text-gray-700">สื่อความรู้ล่าสุด:</h4>
                       {category.books.slice(0, 3).map((book) => (
                         <div key={book.id} className="flex items-center space-x-3 text-sm">
                           <div className="w-8 h-10 bg-gray-100 rounded flex items-center justify-center">
@@ -287,7 +287,7 @@ function CategoriesPageContent() {
                       ))}
                       {category.books.length > 3 && (
                         <p className="text-xs text-gray-500 text-center pt-2">
-                          และอีก {category.books.length - 3} เล่ม...
+                          และอีก {category.books.length - 3} รายการ...
                         </p>
                       )}
                     </div>
@@ -295,7 +295,7 @@ function CategoriesPageContent() {
                     {/* View All Button */}
                     <div className="mt-4 pt-4 border-t border-gray-100">
                       <button className="w-full bg-gray-50 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors group-hover:bg-blue-50 group-hover:text-blue-600">
-                        ดูหนังสือทั้งหมดในหมวดหมู่ →
+                        ดูสื่อทั้งหมดในหมวดหมู่ →
                       </button>
                     </div>
                   </div>
@@ -313,13 +313,13 @@ function CategoriesPageContent() {
               ยังไม่มีหมวดหมู่
             </h3>
             <p className="text-gray-600 mb-4">
-              ยังไม่มีหนังสือในระบบ ลองเพิ่มหนังสือก่อนนะครับ
+              ยังไม่มีสื่อความรู้ในระบบ ลองเพิ่มสื่อความรู้ก่อนนะครับ
             </p>
             <Link
               href="/books"
               className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
             >
-              ดูหนังสือทั้งหมด
+              ดูสื่อทั้งหมด
             </Link>
           </div>
         )}
@@ -335,13 +335,13 @@ function CategoriesPageContent() {
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">{books.length}</div>
-                <div className="text-sm text-gray-600">หนังสือทั้งหมด</div>
+                <div className="text-sm text-gray-600">สื่อทั้งหมด</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
                   {Math.max(...displayCategories.map(cat => cat.books.length))}
                 </div>
-                <div className="text-sm text-gray-600">หนังสือในหมวดหมู่ที่ใหญ่ที่สุด</div>
+                <div className="text-sm text-gray-600">สื่อความรู้ในหมวดหมู่ที่ใหญ่ที่สุด</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-600">

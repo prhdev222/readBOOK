@@ -1,7 +1,7 @@
 {
-  "name": "readBOOK - ห้องสมุดดิจิทัล",
-  "short_name": "readBOOK",
-  "description": "ห้องสมุดดิจิทัลสำหรับอ่านหนังสือออนไลน์",
+  "name": "สื่อความรู้เพื่อพระสงฆ์ (Digital-library)",
+  "short_name": "สื่อความรู้เพื่อพระสงฆ์",
+  "description": "ห้องสมุดดิจิทัลสำหรับพระสงฆ์และผู้สนใจศึกษาธรรม",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

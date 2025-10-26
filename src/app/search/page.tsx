@@ -129,11 +129,11 @@ function SearchPageContent() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <Link href="/" className="text-2xl font-bold text-gray-900">
-                📚 readBOOK
+                🏛️ สื่อความรู้เพื่อพระสงฆ์
               </Link>
               <nav className="flex space-x-8">
                 <Link href="/books" className="text-gray-600 hover:text-gray-900">
-                  หนังสือทั้งหมด
+                  สื่อทั้งหมด
                 </Link>
                 <Link href="/search" className="text-blue-600 font-medium">
                   ค้นหา
@@ -162,11 +162,11 @@ function SearchPageContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <Link href="/" className="text-2xl font-bold text-gray-900">
-              📚 readBOOK
+              🏛️ สื่อความรู้เพื่อพระสงฆ์
             </Link>
             <nav className="flex space-x-8">
               <Link href="/books" className="text-gray-600 hover:text-gray-900">
-                หนังสือทั้งหมด
+                สื่อทั้งหมด
               </Link>
               <Link href="/search" className="text-blue-600 font-medium">
                 ค้นหา
@@ -182,14 +182,14 @@ function SearchPageContent() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">ค้นหาหนังสือ</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">ค้นหาสื่อความรู้</h1>
 
           <form onSubmit={handleSearch} className="mb-6">
             <div className="flex gap-4">
               <div className="flex-1">
                 <input
                   type="text"
-                  placeholder="ค้นหาหนังสือ, ผู้แต่ง, หมวดหมู่, หรือแท็ก..."
+                  placeholder="ค้นหาสื่อความรู้, ผู้แต่ง, หมวดหมู่, หรือแท็ก..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
@@ -289,7 +289,7 @@ function SearchPageContent() {
                   href="/books"
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
-                  ดูหนังสือทั้งหมด
+                  ดูสื่อทั้งหมด
                 </Link>
               </div>
             )}

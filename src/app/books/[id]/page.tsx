@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import MediaPlayerFallback from '@/components/MediaPlayerFallback';
 
 interface Book {
   id: string;
@@ -20,14 +21,20 @@ interface Book {
 interface BookLink {
   id: string;
   book_id: string;
-  type: 'google_drive' | 'dropbox' | 'onedrive' | 'mega' | 'mediafire' | 'direct' | 'other';
+  type: 'google_drive' | 'dropbox' | 'onedrive' | 'mega' | 'mediafire' | 'direct' | 'other' | 'youtube' | 'vimeo' | 'soundcloud' | 'spotify' | 'image' | 'audio' | 'video';
   url: string;
   title: string;
   description?: string;
   is_primary: boolean;
   is_active: boolean;
+  media_type?: 'file' | 'image' | 'audio' | 'video' | 'youtube' | 'document';
+  thumbnail_url?: string;
+  duration?: number;
+  file_size?: number;
+  mime_type?: string;
+  collection_id?: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 interface BookWithLinks extends Book {
@@ -76,7 +83,7 @@ export default function BookDetailsPage() {
       setBook(bookWithLinks);
     } catch (error) {
       console.error('Error loading book:', error);
-      setError('ไม่พบหนังสือที่คุณต้องการ');
+      setError('ไม่พบสื่อความรู้ที่คุณต้องการ');
     } finally {
       setLoading(false);
     }
@@ -98,13 +105,13 @@ export default function BookDetailsPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">❌</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">ไม่พบหนังสือ</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">ไม่พบสื่อความรู้</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <Link
             href="/books"
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            กลับไปหน้าหนังสือทั้งหมด
+            กลับไปหน้าสื่อทั้งหมด
           </Link>
         </div>
       </div>
@@ -125,12 +132,12 @@ export default function BookDetailsPage() {
                 ← กลับ
               </button>
               <Link href="/" className="text-2xl font-bold text-gray-900">
-                📚 readBOOK
+                🏛️ สื่อความรู้เพื่อพระสงฆ์
               </Link>
             </div>
             <nav className="flex space-x-8">
               <Link href="/books" className="text-blue-600 font-medium">
-                หนังสือทั้งหมด
+                สื่อทั้งหมด
               </Link>
               <Link href="/search" className="text-gray-600 hover:text-gray-900">
                 ค้นหา
@@ -177,41 +184,20 @@ export default function BookDetailsPage() {
               </div>
             )}
 
-            {/* Download Links */}
+            {/* Media Content */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">ลิงก์ดาวน์โหลด</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">สื่อและไฟล์</h2>
               {book.links.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {book.links.map((link) => (
-                    <a
+                    <MediaPlayerFallback
                       key={link.id}
-                      href={link.url}
-                      download
-                      className="block bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <span className="text-2xl">
-                          {link.type === 'google_drive' ? '📁' : 
-                           link.type === 'direct' ? '📥' : '🔗'}
-                        </span>
-                        <div>
-                          <div className="font-semibold">{link.title}</div>
-                          <div className="text-sm opacity-90">
-                            {link.type === 'google_drive' ? 'Google Drive' :
-                             link.type === 'direct' ? 'ดาวน์โหลดไฟล์' : 'ลิงก์อื่น'}
-                          </div>
-                        </div>
-                        {link.is_primary && (
-                          <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">
-                            หลัก
-                          </span>
-                        )}
-                      </div>
-                    </a>
+                      media={link}
+                    />
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500">ไม่มีลิงก์ดาวน์โหลดสำหรับหนังสือเล่มนี้</p>
+                <p className="text-gray-500">ไม่มีสื่อหรือไฟล์สำหรับสื่อความรู้นี้</p>
               )}
             </div>
 
@@ -221,7 +207,7 @@ export default function BookDetailsPage() {
                 href="/books"
                 className="bg-gray-100 text-gray-700 py-3 px-6 rounded-lg text-lg font-medium hover:bg-gray-200 transition-colors"
               >
-                หนังสือทั้งหมด
+                สื่อทั้งหมด
               </Link>
             </div>
           </div>

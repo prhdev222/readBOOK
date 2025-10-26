@@ -77,8 +77,15 @@ export async function PUT(
           type: link.type,
           url: link.url,
           title: link.title,
+          description: link.description || null,
           is_primary: link.is_primary,
-          is_active: true
+          is_active: true,
+          media_type: link.media_type || 'file',
+          thumbnail_url: link.thumbnail_url || null,
+          duration: link.duration || null,
+          file_size: link.file_size || null,
+          mime_type: link.mime_type || null,
+          collection_id: link.collection_id || null
         }));
 
         const { error: linksError } = await supabase

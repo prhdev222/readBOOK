@@ -112,7 +112,7 @@ function AdminDashboardContent() {
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
               <Link href="/" className="text-2xl font-bold text-gray-900 mr-4">
-                📚 readBOOK
+                🏛️ สื่อความรู้เพื่อพระสงฆ์
               </Link>
               <h1 className="text-xl font-semibold text-gray-900">Admin Dashboard</h1>
             </div>

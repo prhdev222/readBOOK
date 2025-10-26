@@ -28,7 +28,18 @@ function AddBookPageContent() {
   });
 
   const [links, setLinks] = useState([
-    { type: 'google_drive', url: '', title: 'Google Drive', is_primary: true }
+    { 
+      type: 'google_drive', 
+      url: '', 
+      title: 'Google Drive', 
+      is_primary: true, 
+      media_type: 'file',
+      description: '',
+      thumbnail_url: '',
+      duration: 0,
+      file_size: 0,
+      mime_type: ''
+    }
   ]);
 
   useEffect(() => {
@@ -51,7 +62,7 @@ function AddBookPageContent() {
     setBook(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleLinkChange = (index: number, field: string, value: string | boolean) => {
+  const handleLinkChange = (index: number, field: string, value: string | boolean | number) => {
     const newLinks = [...links];
     newLinks[index] = { ...newLinks[index], [field]: value };
 
@@ -68,7 +79,18 @@ function AddBookPageContent() {
   };
 
   const addLink = () => {
-    setLinks([...links, { type: 'google_drive', url: '', title: '', is_primary: false }]);
+    setLinks([...links, { 
+      type: 'google_drive', 
+      url: '', 
+      title: '', 
+      is_primary: false, 
+      media_type: 'file',
+      description: '',
+      thumbnail_url: '',
+      duration: 0,
+      file_size: 0,
+      mime_type: ''
+    }]);
   };
 
   const removeLink = (index: number) => {
@@ -108,7 +130,14 @@ function AddBookPageContent() {
       if (validLinks.length > 0) {
         const linksWithBookId = validLinks.map(link => ({
           ...link,
-          book_id: bookData.id
+          book_id: bookData.id,
+          is_active: true,
+          description: link.description || null,
+          thumbnail_url: link.thumbnail_url || null,
+          duration: link.duration || null,
+          file_size: link.file_size || null,
+          mime_type: link.mime_type || null,
+          collection_id: null
         }));
 
         const { error: linksError } = await supabase
@@ -284,13 +313,27 @@ function AddBookPageContent() {
                       onChange={(e) => handleLinkChange(index, 'type', e.target.value)}
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     >
-                      <option value="google_drive">Google Drive</option>
-                      <option value="dropbox">Dropbox</option>
-                      <option value="onedrive">OneDrive</option>
-                      <option value="mega">MEGA</option>
-                      <option value="mediafire">MediaFire</option>
-                      <option value="direct">Direct Link</option>
-                      <option value="other">Other</option>
+                      <optgroup label="Cloud Storage">
+                        <option value="google_drive">Google Drive</option>
+                        <option value="dropbox">Dropbox</option>
+                        <option value="onedrive">OneDrive</option>
+                        <option value="mega">MEGA</option>
+                        <option value="mediafire">MediaFire</option>
+                        <option value="direct">Direct Link</option>
+                      </optgroup>
+                      <optgroup label="Media Platforms">
+                        <option value="youtube">YouTube</option>
+                        <option value="vimeo">Vimeo</option>
+                        <option value="soundcloud">SoundCloud</option>
+                        <option value="spotify">Spotify</option>
+                      </optgroup>
+                      <optgroup label="Media Types">
+                        <option value="image">รูปภาพ</option>
+                        <option value="audio">เสียง/MP3</option>
+                        <option value="video">วิดีโอ</option>
+                        <option value="document">เอกสาร</option>
+                      </optgroup>
+                      <option value="other">อื่นๆ</option>
                     </select>
                   </div>
 
@@ -307,7 +350,25 @@ function AddBookPageContent() {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Media Type
+                    </label>
+                    <select
+                      value={link.media_type || 'file'}
+                      onChange={(e) => handleLinkChange(index, 'media_type', e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="file">ไฟล์</option>
+                      <option value="image">รูปภาพ</option>
+                      <option value="audio">เสียง</option>
+                      <option value="video">วิดีโอ</option>
+                      <option value="youtube">YouTube</option>
+                      <option value="document">เอกสาร</option>
+                    </select>
+                  </div>
+
+                  <div>
                     <label className="block text-sm font-medium text-gray-700">
                       URL
                     </label>
@@ -317,6 +378,71 @@ function AddBookPageContent() {
                       onChange={(e) => handleLinkChange(index, 'url', e.target.value)}
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       placeholder="https://..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Thumbnail URL (optional)
+                    </label>
+                    <input
+                      type="url"
+                      value={link.thumbnail_url || ''}
+                      onChange={(e) => handleLinkChange(index, 'thumbnail_url', e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Duration (seconds, optional)
+                    </label>
+                    <input
+                      type="number"
+                      value={link.duration || ''}
+                      onChange={(e) => handleLinkChange(index, 'duration', parseInt(e.target.value) || 0)}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="180"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      File Size (bytes, optional)
+                    </label>
+                    <input
+                      type="number"
+                      value={link.file_size || ''}
+                      onChange={(e) => handleLinkChange(index, 'file_size', parseInt(e.target.value) || 0)}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="1048576"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      MIME Type (optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={link.mime_type || ''}
+                      onChange={(e) => handleLinkChange(index, 'mime_type', e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="image/jpeg, audio/mp3, video/mp4"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Description (optional)
+                    </label>
+                    <textarea
+                      value={link.description || ''}
+                      onChange={(e) => handleLinkChange(index, 'description', e.target.value)}
+                      rows={2}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="คำอธิบายเพิ่มเติม..."
                     />
                   </div>
                 </div>
