@@ -25,7 +25,7 @@ export interface BookLink {
   description?: string
   is_primary: boolean
   is_active: boolean
-  media_type: 'file' | 'image' | 'audio' | 'video' | 'youtube' | 'document'
+  media_type: 'file' | 'image' | 'audio' | 'video' | 'youtube' | 'document' | undefined
   thumbnail_url?: string
   duration?: number
   file_size?: number
