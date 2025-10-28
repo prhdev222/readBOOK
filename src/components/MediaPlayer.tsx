@@ -48,8 +48,11 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
     const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
     if (driveMatch) {
       const fileId = driveMatch[1];
-      return `https://drive.google.com/uc?export=view&id=${fileId}`;
+      const convertedUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+      console.log('Converting Drive URL:', url, '→', convertedUrl);
+      return convertedUrl;
     }
+    console.log('Using original URL:', url);
     return url;
   };
 
