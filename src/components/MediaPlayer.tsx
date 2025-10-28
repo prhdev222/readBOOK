@@ -16,7 +16,6 @@ interface MediaPlayerProps {
 
 export default function MediaPlayer({ media, className = '' }: MediaPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
 
   // Guard clause to prevent runtime errors
   if (!media) {
@@ -97,46 +96,23 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
     switch (media.media_type || 'file') {
       case 'image':
         return (
-          <>
-            <div className="relative group cursor-pointer" onClick={() => setShowImageModal(true)}>
-              <img
-                src={media.url}
-                alt={media.title}
-                className="w-full h-64 object-cover rounded-lg"
-                onError={(e) => {
-                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2E3YmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7guYDguIjguKHguKHguKjguKXguKgg4LmA4Lie4Lij4LiyPC90ZXh0Pjwvc3ZnPg==';
-                }}
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
-                <span className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all duration-200">
-                  คลิกดูรูปภาพขนาดใหญ่
-                </span>
-              </div>
-            </div>
-            
-            {/* Image Modal */}
-            {showImageModal && (
-              <div 
-                className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
-                onClick={() => setShowImageModal(false)}
+          <div className="relative group">
+            <img
+              src={media.url}
+              alt={media.title}
+              className="w-full h-64 object-cover rounded-lg"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
+              <a
+                href={media.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-opacity-100"
               >
-                <div className="max-w-7xl max-h-screen">
-                  <img
-                    src={media.url}
-                    alt={media.title}
-                    className="max-w-full max-h-screen object-contain rounded-lg"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </div>
-                <button
-                  onClick={() => setShowImageModal(false)}
-                  className="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors"
-                >
-                  ×
-                </button>
-              </div>
-            )}
-          </>
+                ดูรูปภาพ
+              </a>
+            </div>
+          </div>
         );
 
       case 'audio':
