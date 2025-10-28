@@ -104,7 +104,7 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
                 alt={media.title}
                 className="w-full h-64 object-cover rounded-lg"
                 onError={(e) => {
-                  e.currentTarget.src = '/placeholder-image.png';
+                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2E3YmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7guYDguIjguKHguKHguKjguKXguKgg4LmA4Lie4Lij4LiyPC90ZXh0Pjwvc3ZnPg==';
                 }}
               />
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
