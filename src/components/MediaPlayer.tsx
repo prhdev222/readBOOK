@@ -214,7 +214,31 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
                 src={proxyUrl}
                 controls
                 className="w-full"
+                onError={(e) => {
+                  console.error('Audio load error:', e);
+                  // ถ้า proxy ล้มเหลว ให้ลองใช้ Google Drive preview
+                  if (idMatch) {
+                    const previewUrl = `https://drive.google.com/file/d/${idMatch[1]}/preview`;
+                    const audioElement = e.target as HTMLAudioElement;
+                    audioElement.src = previewUrl;
+                  }
+                }}
               />
+              
+              {/* Fallback message */}
+              <div className="mt-3 text-center">
+                <p className="text-xs text-gray-500 mb-2">
+                  หากไม่สามารถเล่นได้ กรุณาตรวจสอบสิทธิ์ไฟล์ใน Google Drive
+                </p>
+                <a
+                  href={media.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 text-sm underline"
+                >
+                  เปิดใน Google Drive
+                </a>
+              </div>
 
               {/* Additional info */}
               {(media.duration || media.file_size) && (
