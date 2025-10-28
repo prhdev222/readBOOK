@@ -42,6 +42,17 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Convert Google Drive URL to direct image URL
+  const convertDriveUrl = (url: string) => {
+    // Check if it's a Google Drive URL
+    const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) {
+      const fileId = driveMatch[1];
+      return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    }
+    return url;
+  };
+
   const getMediaIcon = () => {
     switch (media.media_type || 'file') {
       case 'image':
@@ -95,16 +106,17 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
   const renderMediaContent = () => {
     switch (media.media_type || 'file') {
       case 'image':
+        const imageUrl = convertDriveUrl(media.url);
         return (
           <div className="relative group">
             <img
-              src={media.url}
+              src={imageUrl}
               alt={media.title}
               className="w-full h-64 object-cover rounded-lg"
             />
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
               <a
-                href={media.url}
+                href={imageUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-opacity-100"
