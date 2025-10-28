@@ -79,48 +79,57 @@ function CategoriesPageContent() {
       return {
         icon: categoryFromDb.icon,
         color: 'from-' + categoryFromDb.color.replace('#', '') + ' to-' + categoryFromDb.color.replace('#', '') + '-600',
-        description: categoryFromDb.description || `สื่อความรู้ในหมวดหมู่ ${categoryName}`
+        description: categoryFromDb.description || `สื่อความรู้ในหมวดหมู่ ${categoryName}`,
+        // ให้ type ของ info มี backgroundColor เสมอ (อาจเป็น undefined)
+        backgroundColor: undefined as string | undefined,
       };
     }
 
     // Fallback colors for categories not in database
-    const fallbackColors: Record<string, { icon: string; color: string; description: string }> = {
+    const fallbackColors: Record<string, { icon: string; color: string; description: string; backgroundColor?: string }> = {
       'เทคโนโลยี': {
         icon: '💻',
         color: 'from-blue-500 to-cyan-600',
-        description: 'สื่อความรู้เกี่ยวกับการเขียนโปรแกรม คอมพิวเตอร์ และเทคโนโลยี'
+        description: 'สื่อความรู้เกี่ยวกับการเขียนโปรแกรม คอมพิวเตอร์ และเทคโนโลยี',
+        backgroundColor: undefined,
       },
       'AI & Data Science': {
         icon: '🤖',
         color: 'from-purple-500 to-pink-600',
-        description: 'ปัญญาประดิษฐ์ การเรียนรู้ของเครื่อง และวิทยาศาสตร์ข้อมูล'
+        description: 'ปัญญาประดิษฐ์ การเรียนรู้ของเครื่อง และวิทยาศาสตร์ข้อมูล',
+        backgroundColor: undefined,
       },
       'การออกแบบ': {
         icon: '🎨',
         color: 'from-green-500 to-teal-600',
-        description: 'การออกแบบ UI/UX กราฟิก และดีไซน์ต่างๆ'
+        description: 'การออกแบบ UI/UX กราฟิก และดีไซน์ต่างๆ',
+        backgroundColor: undefined,
       },
       'ธุรกิจ': {
         icon: '💼',
         color: 'from-orange-500 to-red-600',
-        description: 'การบริหาร การลงทุน และการพัฒนาธุรกิจ'
+        description: 'การบริหาร การลงทุน และการพัฒนาธุรกิจ',
+        backgroundColor: undefined,
       },
       'การศึกษา': {
         icon: '📖',
         color: 'from-indigo-500 to-blue-600',
-        description: 'สื่อความรู้เพื่อการศึกษาและการเรียนรู้'
+        description: 'สื่อความรู้เพื่อการศึกษาและการเรียนรู้',
+        backgroundColor: undefined,
       },
       'ไลฟ์สไตล์': {
         icon: '🌟',
         color: 'from-pink-500 to-rose-600',
-        description: 'การใช้ชีวิต สุขภาพ และการพัฒนาตนเอง'
+        description: 'การใช้ชีวิต สุขภาพ และการพัฒนาตนเอง',
+        backgroundColor: undefined,
       }
     };
 
     return fallbackColors[categoryName] || {
       icon: '📚',
       color: 'from-gray-500 to-gray-600',
-      description: `สื่อความรู้ในหมวดหมู่ ${categoryName}`
+      description: `สื่อความรู้ในหมวดหมู่ ${categoryName}`,
+      backgroundColor: undefined,
     };
   };
 
