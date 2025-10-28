@@ -16,6 +16,7 @@ interface MediaPlayerProps {
 
 export default function MediaPlayer({ media, className = '' }: MediaPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [imageUrlState, setImageUrlState] = useState<Map<string, string>>(new Map());
 
   // Guard clause to prevent runtime errors
   if (!media) {
@@ -53,6 +54,16 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
       return convertedUrl;
     }
     console.log('Using original URL:', url);
+    return url;
+  };
+
+  // Get alternative URL if first one fails
+  const getAlternativeUrl = (url: string) => {
+    const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) {
+      const fileId = driveMatch[1];
+      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+    }
     return url;
   };
 
@@ -109,21 +120,28 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
   const renderMediaContent = () => {
     switch (media.media_type || 'file') {
       case 'image':
-        const imageUrl = convertDriveUrl(media.url);
+        const initialImageUrl = convertDriveUrl(media.url);
+        const currentImageUrl = imageUrlState.get(media.id) || initialImageUrl;
+        
         return (
           <div className="relative group bg-gray-100 rounded-lg">
             <img
-              src={imageUrl}
+              src={currentImageUrl}
               alt={media.title}
               className="w-full h-64 object-cover rounded-lg"
               onError={(e) => {
-                console.error('Image load error:', imageUrl);
+                if (currentImageUrl === initialImageUrl) {
+                  console.error('Image load error, trying alternative:', currentImageUrl);
+                  const altUrl = getAlternativeUrl(media.url);
+                  setImageUrlState(new Map(imageUrlState).set(media.id, altUrl));
+                  console.log('Trying alternative URL:', altUrl);
+                }
               }}
             />
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center pointer-events-none">
               <div className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all duration-200 pointer-events-auto">
                 <a
-                  href={imageUrl}
+                  href={media.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:underline"
