@@ -108,21 +108,26 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
       case 'image':
         const imageUrl = convertDriveUrl(media.url);
         return (
-          <div className="relative group">
+          <div className="relative group bg-gray-100 rounded-lg">
             <img
               src={imageUrl}
               alt={media.title}
               className="w-full h-64 object-cover rounded-lg"
+              onError={(e) => {
+                console.error('Image load error:', imageUrl);
+              }}
             />
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
-              <a
-                href={imageUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-opacity-100"
-              >
-                ดูรูปภาพ
-              </a>
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center pointer-events-none">
+              <div className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all duration-200 pointer-events-auto">
+                <a
+                  href={imageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  ดูรูปภาพ
+                </a>
+              </div>
             </div>
           </div>
         );
