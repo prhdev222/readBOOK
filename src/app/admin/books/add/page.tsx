@@ -13,11 +13,21 @@ interface NewBook {
   language: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+  created_at: string;
+}
+
 function AddBookPageContent() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
 
   const [book, setBook] = useState<NewBook>({
     title: '',
@@ -44,6 +54,7 @@ function AddBookPageContent() {
 
   useEffect(() => {
     checkAuth();
+    loadCategories();
   }, []);
 
   const checkAuth = async () => {
@@ -54,6 +65,23 @@ function AddBookPageContent() {
       }
     } catch (error) {
       router.push('/admin/login');
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      setCategoriesLoading(true);
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    } finally {
+      setCategoriesLoading(false);
     }
   };
 
@@ -234,9 +262,29 @@ function AddBookPageContent() {
               </div>
 
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                  Category *
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                    Category *
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={loadCategories}
+                      className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+                      disabled={categoriesLoading}
+                      title="รีเฟรชหมวดหมู่"
+                    >
+                      {categoriesLoading ? 'กำลังรีเฟรช...' : 'รีเฟรช'}
+                    </button>
+                    <Link
+                      href="/admin/categories"
+                      className="text-xs text-blue-600 hover:text-blue-800"
+                      title="เพิ่มหมวดหมู่ใหม่"
+                    >
+                      + เพิ่มหมวดหมู่
+                    </Link>
+                  </div>
+                </div>
                 <select
                   id="category"
                   name="category"
@@ -245,13 +293,12 @@ function AddBookPageContent() {
                   onChange={handleInputChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="">Select a category</option>
-                  <option value="เทคโนโลยี">เทคโนโลยี</option>
-                  <option value="AI & Data Science">AI & Data Science</option>
-                  <option value="การเงิน">การเงิน</option>
-                  <option value="สุขภาพ">สุขภาพ</option>
-                  <option value="การศึกษา">การศึกษา</option>
-                  <option value="ธุรกิจ">ธุรกิจ</option>
+                  <option value="">เลือกหมวดหมู่</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.icon} {category.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 

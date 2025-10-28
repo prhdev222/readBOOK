@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { supabase, BookLink } from '@/lib/supabase';
 
 interface Book {
   id: string;
@@ -16,23 +16,14 @@ interface Book {
   updated_at: string;
 }
 
-interface BookLink {
+// ใช้ BookLink จาก supabase.ts
+
+interface Category {
   id: string;
-  book_id: string;
-  type: 'google_drive' | 'dropbox' | 'onedrive' | 'mega' | 'mediafire' | 'direct' | 'other' | 'youtube' | 'vimeo' | 'soundcloud' | 'spotify' | 'image' | 'audio' | 'video';
-  url: string;
-  title: string;
-  description?: string;
-  is_primary: boolean;
-  is_active: boolean;
-  media_type?: 'file' | 'image' | 'audio' | 'video' | 'youtube' | 'document';
-  thumbnail_url?: string;
-  duration?: number;
-  file_size?: number;
-  mime_type?: string;
-  collection_id?: string;
+  name: string;
+  color: string;
+  icon: string;
   created_at: string;
-  updated_at: string;
 }
 
 function EditBookPageContent() {
@@ -57,10 +48,13 @@ function EditBookPageContent() {
   });
 
   const [links, setLinks] = useState<BookLink[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
 
   useEffect(() => {
     checkAuth();
     loadBook();
+    loadCategories();
   }, [bookId]);
 
   const checkAuth = async () => {
@@ -107,6 +101,22 @@ function EditBookPageContent() {
       setError('Failed to load book data');
     } finally {
       setInitialLoading(false);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      setCategoriesLoading(true);
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name', { ascending: true });
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    } finally {
+      setCategoriesLoading(false);
     }
   };
 
@@ -288,9 +298,29 @@ function EditBookPageContent() {
               </div>
 
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                  Category *
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                    Category *
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={loadCategories}
+                      className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+                      disabled={categoriesLoading}
+                      title="รีเฟรชหมวดหมู่"
+                    >
+                      {categoriesLoading ? 'กำลังรีเฟรช...' : 'รีเฟรช'}
+                    </button>
+                    <Link
+                      href="/admin/categories"
+                      className="text-xs text-blue-600 hover:text-blue-800"
+                      title="เพิ่มหมวดหมู่ใหม่"
+                    >
+                      + เพิ่มหมวดหมู่
+                    </Link>
+                  </div>
+                </div>
                 <select
                   id="category"
                   name="category"
@@ -299,13 +329,12 @@ function EditBookPageContent() {
                   onChange={handleInputChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="">Select a category</option>
-                  <option value="เทคโนโลยี">เทคโนโลยี</option>
-                  <option value="AI & Data Science">AI & Data Science</option>
-                  <option value="การเงิน">การเงิน</option>
-                  <option value="สุขภาพ">สุขภาพ</option>
-                  <option value="การศึกษา">การศึกษา</option>
-                  <option value="ธุรกิจ">ธุรกิจ</option>
+                  <option value="">เลือกหมวดหมู่</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.icon} {category.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 

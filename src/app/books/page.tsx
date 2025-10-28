@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { supabase, BookLink } from '@/lib/supabase';
 
 interface Book {
   id: string;
@@ -19,18 +19,7 @@ interface Book {
   updated_at: string;
 }
 
-interface BookLink {
-  id: string;
-  book_id: string;
-  type: 'google_drive' | 'dropbox' | 'onedrive' | 'mega' | 'mediafire' | 'direct' | 'other';
-  url: string;
-  title: string;
-  description?: string;
-  is_primary: boolean;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
+// ใช้ BookLink จาก supabase.ts
 
 interface BookWithLinks extends Book {
   links: BookLink[];

@@ -206,7 +206,8 @@ function CategoriesPageContent() {
         books: booksByCategory[cat.name] || [],
         info: {
           icon: cat.icon,
-          color: 'from-blue-500 to-' + cat.color.replace('#', '') + '-600',
+          color: 'from-blue-500 to-blue-600', // ใช้สีพื้นฐานแทน dynamic color
+          backgroundColor: cat.color, // เก็บสีจริงไว้สำหรับใช้ใน style
           description: cat.description || `สื่อความรู้ในหมวดหมู่ ${cat.name}`
         }
       }))
@@ -256,9 +257,21 @@ function CategoriesPageContent() {
               <Link href={`/books?category=${encodeURIComponent(category.name)}`}>
                 <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   {/* Category Header */}
-                  <div className={`bg-gradient-to-br ${category.info.color} p-8 text-white text-center`}>
+                  <div 
+                    className="p-8 text-white text-center"
+                    style={{ 
+                      background: category.info.backgroundColor 
+                        ? `linear-gradient(135deg, ${category.info.backgroundColor}20, ${category.info.backgroundColor})`
+                        : `linear-gradient(135deg, ${category.info.color})`
+                    }}
+                  >
                     <div className="text-5xl mb-4">{category.info.icon}</div>
-                    <h2 className="text-2xl font-bold mb-2">{category.name}</h2>
+                    <h2
+                      className="text-3xl font-extrabold mb-2 tracking-wide drop-shadow"
+                      style={{ textShadow: '0 2px 4px rgba(0,0,0,0.35)' }}
+                    >
+                      {category.name}
+                    </h2>
                     <p className="text-white/80 text-sm">{category.info.description}</p>
                   </div>
 

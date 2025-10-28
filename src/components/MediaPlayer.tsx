@@ -17,6 +17,7 @@ interface MediaPlayerProps {
 export default function MediaPlayer({ media, className = '' }: MediaPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [imageUrlState, setImageUrlState] = useState<Map<string, string>>(new Map());
+  const [volume, setVolume] = useState(75); // เพิ่ม state สำหรับ volume
 
   // Guard clause to prevent runtime errors
   if (!media) {
@@ -43,19 +44,53 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // Convert Google Drive URL to direct image URL
-  const convertDriveUrl = (url: string) => {
+  // ฟังก์ชันจัดการ volume
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
+    // ปรับ volume ของ iframe (Google Drive player)
+    const iframe = document.querySelector('iframe[title*="Audio player"]') as HTMLIFrameElement;
+    if (iframe && iframe.contentWindow) {
+      try {
+        // ส่ง message ไปยัง iframe เพื่อปรับ volume
+        iframe.contentWindow.postMessage({
+          type: 'setVolume',
+          volume: newVolume / 100
+        }, '*');
+      } catch (error) {
+        console.log('Cannot control iframe volume:', error);
+      }
+    }
+  };
+
+  // Convert Google Drive URL to direct download URL
+  const convertDriveUrl = (url: string, mediaType?: string) => {
     // Check if it's a Google Drive URL
     const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
     if (driveMatch) {
       const fileId = driveMatch[1];
-      const convertedUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-      console.log('Converting Drive URL:', url, '→', convertedUrl);
-      return convertedUrl;
+      
+      // Different conversion based on media type
+      if (mediaType === 'audio' || mediaType === 'video') {
+        // For audio/video files, use direct download
+        const convertedUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        console.log('Converting Drive URL for media:', url, '→', convertedUrl);
+        return convertedUrl;
+      } else if (mediaType === 'image') {
+        // For images, use view URL
+        const convertedUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+        console.log('Converting Drive URL for image:', url, '→', convertedUrl);
+        return convertedUrl;
+      } else {
+        // For other files, use download URL
+        const convertedUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        console.log('Converting Drive URL for file:', url, '→', convertedUrl);
+        return convertedUrl;
+      }
     }
     console.log('Using original URL:', url);
     return url;
   };
+
 
   // Get alternative URL if first one fails
   const getAlternativeUrl = (url: string) => {
@@ -120,7 +155,7 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
   const renderMediaContent = () => {
     switch (media.media_type || 'file') {
       case 'image':
-        const initialImageUrl = convertDriveUrl(media.url);
+        const initialImageUrl = convertDriveUrl(media.url, 'image');
         const currentImageUrl = imageUrlState.get(media.id) || initialImageUrl;
         
         return (
@@ -154,47 +189,85 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
         );
 
       case 'audio':
+        // แปลง Drive URL เป็น proxy API
+        const idMatch = media.url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+        const proxyUrl = idMatch ? `/api/proxy/google-drive?id=${idMatch[1]}` : media.url;
+
         return (
-          <div className="bg-gray-100 rounded-lg p-4">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
-              >
-                {isPlaying ? '⏸️' : '▶️'}
-              </button>
-              <div className="flex-1">
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                  <span>{formatTime(0)}</span>
-                  <span>{formatTime(media.duration || 0)}</span>
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-lg">🎵</span>
                 </div>
-                <div className="w-full bg-gray-300 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: '0%' }}
-                  ></div>
+                <div>
+                  <h4 className="font-semibold text-white text-lg">{media.title}</h4>
+                  <p className="text-blue-100 text-sm">เสียง</p>
                 </div>
               </div>
             </div>
-            <audio
-              src={media.url}
-              controls
-              className="w-full mt-2"
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-            />
+
+            {/* Content */}
+            <div className="p-6">
+              <audio
+                src={proxyUrl}
+                controls
+                className="w-full"
+              />
+
+              {/* Additional info */}
+              {(media.duration || media.file_size) && (
+                <div className="flex justify-center space-x-6 mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500">
+                  {media.duration && (
+                    <span className="flex items-center space-x-1">
+                      <span>⏱️</span>
+                      <span>{formatTime(media.duration)}</span>
+                    </span>
+                  )}
+                  {media.file_size && (
+                    <span className="flex items-center space-x-1">
+                      <span>📦</span>
+                      <span>{formatFileSize(media.file_size)}</span>
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         );
 
       case 'video':
+        const videoUrl = convertDriveUrl(media.url, 'video');
         return (
           <div className="relative">
             <video
-              src={media.url}
+              src={videoUrl}
               controls
               className="w-full h-64 object-cover rounded-lg"
               poster={media.thumbnail_url}
+              onError={(e) => {
+                console.error('Video load error:', e);
+                // Try alternative URL if available
+                const altUrl = getAlternativeUrl(media.url);
+                if (altUrl !== media.url) {
+                  console.log('Trying alternative URL:', altUrl);
+                  const videoElement = e.target as HTMLVideoElement;
+                  videoElement.src = altUrl;
+                }
+              }}
             />
+            {/* Fallback download link */}
+            <div className="mt-2 text-center">
+              <a
+                href={videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 text-sm underline"
+              >
+                ดาวน์โหลดไฟล์วิดีโอ
+              </a>
+            </div>
           </div>
         );
 
@@ -218,12 +291,13 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
         );
 
       default:
+        const fileUrl = convertDriveUrl(media.url, 'file');
         return (
           <div className="bg-gray-100 rounded-lg p-6 text-center">
             <div className="text-4xl mb-2">{getMediaIcon()}</div>
             <p className="text-gray-600 mb-4">{media.title}</p>
             <a
-              href={media.url}
+              href={fileUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { supabase, BookLink } from '@/lib/supabase';
 import MediaPlayer from '@/components/MediaPlayer';
 
 interface Book {
@@ -18,24 +18,7 @@ interface Book {
   updated_at: string;
 }
 
-interface BookLink {
-  id: string;
-  book_id: string;
-  type: 'google_drive' | 'dropbox' | 'onedrive' | 'mega' | 'mediafire' | 'direct' | 'other' | 'youtube' | 'vimeo' | 'soundcloud' | 'spotify' | 'image' | 'audio' | 'video';
-  url: string;
-  title: string;
-  description?: string;
-  is_primary: boolean;
-  is_active: boolean;
-  media_type?: 'file' | 'image' | 'audio' | 'video' | 'youtube' | 'document';
-  thumbnail_url?: string;
-  duration?: number;
-  file_size?: number;
-  mime_type?: string;
-  collection_id?: string;
-  created_at: string;
-  updated_at?: string;
-}
+// ใช้ BookLink จาก supabase.ts แทนการกำหนดใหม่
 
 interface BookWithLinks extends Book {
   links: BookLink[];
