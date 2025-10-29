@@ -189,9 +189,20 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
         );
 
       case 'audio':
-        // แปลง Drive URL เป็น proxy API
-        const idMatch = media.url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-        const proxyUrl = idMatch ? `/api/proxy/google-drive?id=${idMatch[1]}` : media.url;
+        // ตรวจสอบประเภท URL และจัดการตามนั้น
+        const driveMatch = media.url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+        const megaMatch = media.url.match(/mega\.nz\/file\/([a-zA-Z0-9_-]+)#([a-zA-Z0-9_-]+)/);
+        
+        let audioSrc = media.url;
+        let isMegaLink = false;
+        
+        if (driveMatch) {
+          // Google Drive - ใช้ proxy API
+          audioSrc = `/api/proxy/google-drive?id=${driveMatch[1]}`;
+        } else if (megaMatch) {
+          // MEGA - ไม่สามารถเล่นได้โดยตรง ต้องดาวน์โหลด
+          isMegaLink = true;
+        }
 
         return (
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
@@ -210,35 +221,55 @@ export default function MediaPlayer({ media, className = '' }: MediaPlayerProps)
 
             {/* Content */}
             <div className="p-6">
-              <audio
-                src={proxyUrl}
-                controls
-                className="w-full"
-                onError={(e) => {
-                  console.error('Audio load error:', e);
-                  // ถ้า proxy ล้มเหลว ให้ลองใช้ Google Drive preview
-                  if (idMatch) {
-                    const previewUrl = `https://drive.google.com/file/d/${idMatch[1]}/preview`;
-                    const audioElement = e.target as HTMLAudioElement;
-                    audioElement.src = previewUrl;
-                  }
-                }}
-              />
-              
-              {/* Fallback message */}
-              <div className="mt-3 text-center">
-                <p className="text-xs text-gray-500 mb-2">
-                  หากไม่สามารถเล่นได้ กรุณาตรวจสอบสิทธิ์ไฟล์ใน Google Drive
-                </p>
-                <a
-                  href={media.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 text-sm underline"
-                >
-                  เปิดใน Google Drive
-                </a>
-              </div>
+              {isMegaLink ? (
+                // MEGA links - แสดงข้อความและปุ่มดาวน์โหลด
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-4">📁</div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">ไฟล์ MEGA</h3>
+                  <p className="text-gray-600 mb-4">
+                    ไม่สามารถเล่นไฟล์จาก MEGA ได้โดยตรงในเว็บไซต์<br/>
+                    กรุณาดาวน์โหลดเพื่อฟัง
+                  </p>
+                  <a
+                    href={media.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                  >
+                    📥 ดาวน์โหลดไฟล์
+                  </a>
+                </div>
+              ) : (
+                // Google Drive หรือ direct links - แสดง audio player
+                <>
+                  <audio
+                    src={audioSrc}
+                    controls
+                    className="w-full"
+                    onError={(e) => {
+                      console.error('Audio load error:', e);
+                      // ถ้า proxy ล้มเหลว ให้ลองใช้ Google Drive preview
+                      if (driveMatch) {
+                        const previewUrl = `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+                        const audioElement = e.target as HTMLAudioElement;
+                        audioElement.src = previewUrl;
+                      }
+                    }}
+                  />
+                  
+                  {/* Download link */}
+                  <div className="mt-3 text-center">
+                    <a
+                      href={media.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm underline"
+                    >
+                      download
+                    </a>
+                  </div>
+                </>
+              )}
 
               {/* Additional info */}
               {(media.duration || media.file_size) && (
